@@ -1,0 +1,40 @@
+/* Variables Nivel Global (Tu sistema de diseño centralizado) */
+:root {
+    --bg-color: #f8fafc;
+    --surface: #ffffff;
+    --text-color: #0f172a;
+    --border-color: #e2e8f0;
+    --primary: #059669;
+}
+
+[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --surface: #1e293b;
+    --text-color: #f8fafc;
+    --border-color: #334155;
+    --primary: #10b981;
+}
+
+/* Reset CSS Estricto */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; /* Evita el scroll global, cada panel manejará el suyo */
+}
+
+/* El lienzo ocupa el 100% de la pantalla */
+#app {
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
