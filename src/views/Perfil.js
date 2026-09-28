@@ -22,7 +22,9 @@ export const Perfil = {
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500;">📊 Panel de Control</a></li>
+                            <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                             ${menuAdmin}
+                            
                         </ul>
                     </div>
 
