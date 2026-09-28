@@ -3,11 +3,14 @@ import { fetchAPI } from '../utils/api.js';
 export const Clientes = {
     render: () => {
         const usuarioStr = localStorage.getItem('usuario');
-        const usuario = usuarioStr ? JSON.parse(usuarioStr) : { firstName: 'Usuario', role: 'Desconocido', email: '' };
+        const usuario = usuarioStr ? JSON.parse(usuarioStr) : { name: 'Usuario', role: 'Desconocido', email: '' };
 
         if (!['ADMIN', 'VENDEDOR'].includes(usuario.role)) {
             return `<div style="padding: 40px; color: red;"><h1>Acceso Denegado</h1><p>No tienes permisos para ver esta vista.</p></div>`;
         }
+
+        const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
+        const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
 
         const menuAdmin = usuario.role === 'ADMIN' 
             ? `<li><a href="#/usuarios" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">👥 Gestión de Usuarios</a></li>` 
@@ -26,17 +29,18 @@ export const Clientes = {
                             <h2 style="color: var(--text-color); letter-spacing: -0.5px;">Quantix</h2>
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
-                            <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500;">📊 Panel de Control</a></li>
+                            <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">🏷️ Clientes</a></li>
                             ${menuAdmin}
                         </ul>
                     </div>
 
+                    <!-- FOOTER DEL SIDEBAR -->
                     <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
                         <div style="margin-bottom: 15px;">
-                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${usuario.firstName} ${usuario.lastName || ''}</p>
-                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email}</p>
-                            <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role}</span>
+                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email || ''}</p>
+                            <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role || 'Sin Rol'}</span>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
@@ -165,9 +169,7 @@ export const Clientes = {
         const modalError = document.getElementById('modal-error');
         const estadoContainer = document.getElementById('estado-container');
 
-        // Función centralizada para renderizar la tabla con 1 o más clientes
         const renderTabla = (clientesData) => {
-            // Aseguramos que siempre sea un array para el map
             const clientes = Array.isArray(clientesData) ? clientesData : [clientesData];
 
             if (clientes.length === 0 || !clientes[0]) {
@@ -211,7 +213,6 @@ export const Clientes = {
             }
         };
 
-        // EVENTOS DE BÚSQUEDA
         document.getElementById('btn-buscar').addEventListener('click', async () => {
             const doc = document.getElementById('search-doc').value.trim();
             const email = document.getElementById('search-email').value.trim();
@@ -225,7 +226,7 @@ export const Clientes = {
                 } else if (email) {
                     resultado = await fetchAPI(`/clients/email/${email}`);
                 }
-                renderTabla(resultado); // Muestra el cliente, activo o inactivo
+                renderTabla(resultado);
             } catch (error) {
                 tbody.innerHTML = `<tr><td colspan="5" style="color: #ef4444; text-align: center; padding: 20px; font-weight: bold;">${error.message}</td></tr>`;
             }
@@ -305,7 +306,6 @@ export const Clientes = {
                     });
                 }
                 modal.style.display = 'none'; 
-                // Al guardar, limpiamos filtros y recargamos tabla
                 document.getElementById('btn-limpiar').click();
             } catch (error) {
                 modalError.textContent = error.message;

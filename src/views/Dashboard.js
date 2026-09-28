@@ -1,7 +1,11 @@
 export const Dashboard = {
     render: () => {
         const usuarioStr = localStorage.getItem('usuario');
-        const usuario = usuarioStr ? JSON.parse(usuarioStr) : { firstName: 'Usuario', role: 'Desconocido', email: '' };
+        const usuario = usuarioStr ? JSON.parse(usuarioStr) : { name: 'Usuario', role: 'Desconocido', email: '' };
+
+        // Extracción segura de nombre y apellido
+        const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
+        const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
 
         const menuAdmin = usuario.role === 'ADMIN' 
             ? `<li><a href="#/usuarios" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">👥 Gestión de Usuarios</a></li>` 
@@ -21,7 +25,7 @@ export const Dashboard = {
                             <h2 style="color: var(--text-color); letter-spacing: -0.5px;">Quantix</h2>
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
-                            <!-- Botón Activo con contraste corregido -->
+                            <!-- Botón Activo con contraste y orden homologado -->
                             <li><a href="#/dashboard" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">📊 Panel de Control</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                             ${menuAdmin}
@@ -31,9 +35,9 @@ export const Dashboard = {
                     <!-- FOOTER DEL SIDEBAR -->
                     <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
                         <div style="margin-bottom: 15px;">
-                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${usuario.firstName || usuario.name || 'Usuario'} ${usuario.lastName || ''}</p>
-                            <p style="color: var(--text-color); opacity: 0.7; font-size: 0.8rem; margin-bottom: 5px;">${usuario.email}</p>
-                            <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role}</span>
+                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email || ''}</p>
+                            <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role || 'Sin Rol'}</span>
                         </div>
                         
                         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -48,12 +52,12 @@ export const Dashboard = {
                 <main style="flex: 1; display: flex; flex-direction: column; padding: 40px; overflow-y: auto;">
                     <header style="margin-bottom: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;">
                         <h1 style="color: var(--text-color); font-size: 2rem;">Panel de Control</h1>
-                        <p style="color: var(--text-color); opacity: 0.7; margin-top: 5px;">Resumen general de tu cuenta y operaciones.</p>
+                        <p style="color: var(--text-muted); margin-top: 5px;">Resumen general de tu cuenta y operaciones.</p>
                     </header>
 
                     <div style="background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.02); max-width: 800px;">
                         <h2 style="color: var(--text-color); margin-bottom: 15px; font-size: 1.2rem;">Estado del Sistema</h2>
-                        <p style="color: var(--text-color); opacity: 0.8; line-height: 1.6;">Tu conexión con el servidor <strong>Quantix Core</strong> está activa. Tienes permisos de <strong style="color: var(--primary);">${usuario.role}</strong> habilitados en esta sesión.</p>
+                        <p style="color: var(--text-muted); line-height: 1.6;">Tu conexión con el servidor <strong>Quantix Core</strong> está activa. Tienes permisos de <strong style="color: var(--primary);">${usuario.role || 'VENDEDOR'}</strong> habilitados en esta sesión.</p>
                     </div>
                 </main>
             </div>

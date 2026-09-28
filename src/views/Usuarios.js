@@ -2,48 +2,46 @@ import { fetchAPI } from '../utils/api.js';
 
 export const Usuarios = {
     render: () => {
-        // 1. HIDRATACIÓN: Datos del usuario para el Sidebar
         const usuarioStr = localStorage.getItem('usuario');
-        const usuario = usuarioStr ? JSON.parse(usuarioStr) : { firstName: 'Usuario', role: 'Desconocido', email: '' };
+        const usuario = usuarioStr ? JSON.parse(usuarioStr) : { name: 'Usuario', role: 'Desconocido', email: '' };
 
         if (usuario.role !== 'ADMIN') {
             return `<div style="padding: 40px; color: red;"><h1>Acceso Denegado</h1><p>Vista exclusiva para Administradores.</p></div>`;
         }
 
-        // Leer el tema actual para el botón
+        const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
+        const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
+
         const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
 
         return `
             <div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color);">
                 
-                <!-- SIDEBAR COMPLETA (Igual al Dashboard y Perfil) -->
-                <nav class="sidebar" style="width: 260px; background-color: var(--form-bg); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
-                    
+                <!-- SIDEBAR -->
+                <nav class="sidebar" style="width: 260px; background-color: var(--surface); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
                     <div>
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
                             <div style="background: var(--primary); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; font-size: 1.2rem;">Q</div>
                             <h2 style="color: var(--text-color); letter-spacing: -0.5px;">Quantix</h2>
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
-                            <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500;">📊 Panel de Control</a></li>
+                            <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
+                            <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                             <!-- Botón Activo -->
                             <li><a href="#/usuarios" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">👥 Gestión de Usuarios</a></li>
-                            <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                         </ul>
                     </div>
 
                     <!-- FOOTER DEL SIDEBAR -->
                     <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
                         <div style="margin-bottom: 15px;">
-                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${usuario.firstName} ${usuario.lastName || ''}</p>
-                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email}</p>
-                            <span style="background: #e2e8f0; color: #475569; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role}</span>
+                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email || ''}</p>
+                            <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role || 'Sin Rol'}</span>
                         </div>
                         
                         <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <!-- Botón de Tema (Nuevo) -->
                             <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
-                            
                             <a href="#/perfil" style="text-decoration: none; width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; text-align: left; display: block; box-sizing: border-box;">⚙️ Mi Perfil</a>
                             <button id="btn-logout-sidebar" style="width: 100%; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left;">🚪 Cerrar Sesión</button>
                         </div>
@@ -52,8 +50,6 @@ export const Usuarios = {
 
                 <!-- CONTENIDO PRINCIPAL -->
                 <main style="flex: 1; display: flex; flex-direction: column; padding: 40px; overflow-y: auto;">
-                    
-                    <!-- HEADER CORREGIDO (Separación correcta del botón) -->
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;">
                         <div>
                             <h1 style="color: var(--text-color); font-size: 2rem;">Gestión de Usuarios</h1>
@@ -63,7 +59,7 @@ export const Usuarios = {
                     </div>
 
                     <!-- TABLA -->
-                    <div style="background: var(--form-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                    <div style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                             <thead style="background: var(--bg-color); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
                                 <tr>
@@ -84,7 +80,7 @@ export const Usuarios = {
 
                 <!-- MODAL FORMULARIO -->
                 <div id="modal-usuario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000;">
-                    <div style="background: var(--form-bg); padding: 35px; border-radius: 16px; width: 90%; max-width: 500px; border: 1px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+                    <div style="background: var(--surface); padding: 35px; border-radius: 16px; width: 90%; max-width: 500px; border: 1px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
                         <h2 id="modal-titulo" style="margin-bottom: 25px; color: var(--text-color); font-size: 1.5rem;">Nuevo Usuario</h2>
                         
                         <form id="form-usuario" style="display: flex; flex-direction: column; gap: 18px;">
@@ -121,7 +117,6 @@ export const Usuarios = {
 
                             <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
                                 <button type="button" id="btn-cerrar-modal" style="padding: 12px 20px; border: none; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: bold;">Cancelar</button>
-                                <!-- CORRECCIÓN: var(--primary) y color white -->
                                 <button type="submit" style="padding: 12px 25px; border: none; background: var(--primary); color: white; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">Guardar Cambios</button>
                             </div>
                         </form>
@@ -135,7 +130,6 @@ export const Usuarios = {
         const usuarioData = JSON.parse(localStorage.getItem('usuario'));
         if (usuarioData?.role !== 'ADMIN') return;
 
-        // 1. EVENTOS DEL SIDEBAR
         document.getElementById('btn-logout-sidebar').addEventListener('click', () => {
             localStorage.clear();
             window.location.hash = '#/login';
@@ -153,7 +147,6 @@ export const Usuarios = {
             }
         });
 
-        // 2. LÓGICA DE LA TABLA
         const tbody = document.getElementById('tabla-usuarios-body');
         const modal = document.getElementById('modal-usuario');
         const form = document.getElementById('form-usuario');
@@ -167,7 +160,7 @@ export const Usuarios = {
                 
                 tbody.innerHTML = usuarios.map(u => `
                     <tr style="border-bottom: 1px solid var(--border-color);">
-                        <td style="padding: 18px 20px; font-weight: 600; color: var(--text-color);">${u.firstName} ${u.lastName || ''}</td>
+                        <td style="padding: 18px 20px; font-weight: 600; color: var(--text-color);">${u.firstName || u.name || ''} ${u.lastName || ''}</td>
                         <td style="padding: 18px 20px; color: var(--text-muted);">${u.tipoDocumento} - ${u.documento}</td>
                         <td style="padding: 18px 20px; color: var(--text-muted);">${u.email}</td>
                         <td style="padding: 18px 20px;"><span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: bold;">${u.role}</span></td>
@@ -223,7 +216,7 @@ export const Usuarios = {
             if (usuario) {
                 tituloModal.textContent = 'Editar Usuario';
                 document.getElementById('user-id').value = usuario.id;
-                document.getElementById('firstName').value = usuario.firstName;
+                document.getElementById('firstName').value = usuario.firstName || usuario.name || '';
                 document.getElementById('lastName').value = usuario.lastName || '';
                 document.getElementById('tipoDocumento').value = usuario.tipoDocumento;
                 document.getElementById('documento').value = usuario.documento;
