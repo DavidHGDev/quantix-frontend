@@ -11,11 +11,9 @@ export const Clientes = {
 
         const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
         const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
-
         const menuAdmin = usuario.role === 'ADMIN' 
             ? `<li><a href="#/usuarios" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">👥 Gestión de Usuarios</a></li>` 
             : '';
-
         const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
 
         return `
@@ -31,11 +29,13 @@ export const Clientes = {
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">🏷️ Clientes</a></li>
+                            <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
+                            <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
+                            <li><a href="#/compras" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🛒 Compras</a></li>
                             ${menuAdmin}
                         </ul>
                     </div>
 
-                    <!-- FOOTER DEL SIDEBAR -->
                     <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
                         <div style="margin-bottom: 15px;">
                             <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
@@ -191,7 +191,7 @@ export const Clientes = {
                             : '<span style="color: #ef4444; font-weight: 700;">🔴 Inactivo</span>'}
                     </td>
                     <td style="padding: 18px 20px;">
-                        <button class="btn-editar" data-client='${JSON.stringify(c)}' style="cursor: pointer; background: transparent; border: none; color: #3b82f6; font-weight: 600; font-size: 0.9rem;">Editar</button>
+                        <button class="btn-editar" data-client='${JSON.stringify(c)}' style="cursor: pointer; background: #eff6ff; border: 1px solid #bfdbfe; color: #3b82f6; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s;">✏️ Editar</button>
                     </td>
                 </tr>
             `).join('');

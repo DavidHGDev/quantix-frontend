@@ -3,14 +3,11 @@ import { fetchAPI } from '../utils/api.js';
 export const Perfil = {
     render: () => {
         const usuarioLocal = JSON.parse(localStorage.getItem('usuario')) || {};
-
         const nombreUsuario = usuarioLocal.name || usuarioLocal.firstName || 'Usuario';
         const apellidoUsuario = usuarioLocal.lastName ? ` ${usuarioLocal.lastName}` : '';
-
         const menuAdmin = usuarioLocal.role === 'ADMIN' 
             ? `<li><a href="#/usuarios" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">👥 Gestión de Usuarios</a></li>` 
             : '';
-
         const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
 
         return `
@@ -26,6 +23,9 @@ export const Perfil = {
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
+                            <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
+                            <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
+                            <li><a href="#/compras" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🛒 Compras</a></li>
                             ${menuAdmin}
                         </ul>
                     </div>
@@ -119,7 +119,6 @@ export const Perfil = {
         const cargarDatosUsuario = async () => {
             try {
                 const userData = await fetchAPI(`/users/${userId}`);
-                
                 document.getElementById('prof-firstName').value = userData.firstName || userData.name || '';
                 document.getElementById('prof-lastName').value = userData.lastName || '';
                 document.getElementById('prof-email').value = userData.email || '';
@@ -183,7 +182,6 @@ export const Perfil = {
         document.getElementById('form-password').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msgBox = document.getElementById('msg-password');
-            
             const newPass = document.getElementById('newPassword').value;
             const confirmPass = document.getElementById('confirmPassword').value;
 

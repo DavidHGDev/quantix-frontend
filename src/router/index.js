@@ -5,6 +5,9 @@ import { Dashboard } from '../views/Dashboard.js';
 import { Usuarios } from '../views/Usuarios.js';
 import { Perfil } from '../views/Perfil.js';
 import { Clientes } from '../views/Clientes.js';
+import { Proveedores } from '../views/Proveedores.js';
+import { Inventario } from '../views/Inventario.js';
+import { Compras } from '../views/Compras.js';
 
 // Diccionario de rutas disponibles
 const routes = {
@@ -15,6 +18,9 @@ const routes = {
     '#/usuarios': Usuarios,
     '#/perfil': Perfil,
     '#/clientes': Clientes,
+    '#/proveedores': Proveedores,
+    '#/inventario': Inventario,
+    '#/compras': Compras
 };
 
 export const router = () => {

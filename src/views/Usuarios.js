@@ -11,7 +11,6 @@ export const Usuarios = {
 
         const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
         const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
-
         const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
 
         return `
@@ -27,7 +26,9 @@ export const Usuarios = {
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
-                            <!-- Botón Activo -->
+                            <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
+                            <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
+                            <li><a href="#/compras" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🛒 Compras</a></li>
                             <li><a href="#/usuarios" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">👥 Gestión de Usuarios</a></li>
                         </ul>
                     </div>
@@ -169,10 +170,10 @@ export const Usuarios = {
                                 ? '<span style="color: #059669; font-weight: 700;">🟢 Activo</span>' 
                                 : '<span style="color: #ef4444; font-weight: 700;">🔴 Inactivo</span>'}
                         </td>
-                        <td style="padding: 18px 20px; display: flex; gap: 15px;">
-                            <button class="btn-editar" data-user='${JSON.stringify(u)}' style="cursor: pointer; background: transparent; border: none; color: #3b82f6; font-weight: 600; font-size: 0.9rem;">Editar</button>
-                            <button class="btn-toggle" data-id='${u.id}' data-estado='${u.isActive}' style="cursor: pointer; background: transparent; border: none; color: ${u.isActive ? '#f59e0b' : '#059669'}; font-weight: 600; font-size: 0.9rem;">
-                                ${u.isActive ? 'Inactivar' : 'Reactivar'}
+                        <td style="padding: 18px 20px; display: flex; gap: 8px;">
+                            <button class="btn-editar" data-user='${JSON.stringify(u)}' style="cursor: pointer; background: #eff6ff; border: 1px solid #bfdbfe; color: #3b82f6; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s;">✏️ Editar</button>
+                            <button class="btn-toggle" data-id='${u.id}' data-estado='${u.isActive}' style="cursor: pointer; background: ${u.isActive ? '#fef2f2' : '#ecfdf5'}; border: 1px solid ${u.isActive ? '#fecaca' : '#a7f3d0'}; color: ${u.isActive ? '#ef4444' : '#059669'}; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s;">
+                                ${u.isActive ? '🚫 Inactivar' : '✅ Reactivar'}
                             </button>
                         </td>
                     </tr>

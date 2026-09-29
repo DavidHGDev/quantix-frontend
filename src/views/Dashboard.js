@@ -3,7 +3,6 @@ export const Dashboard = {
         const usuarioStr = localStorage.getItem('usuario');
         const usuario = usuarioStr ? JSON.parse(usuarioStr) : { name: 'Usuario', role: 'Desconocido', email: '' };
 
-        // Extracción segura de nombre y apellido
         const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
         const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
 
@@ -25,9 +24,11 @@ export const Dashboard = {
                             <h2 style="color: var(--text-color); letter-spacing: -0.5px;">Quantix</h2>
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
-                            <!-- Botón Activo con contraste y orden homologado -->
                             <li><a href="#/dashboard" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">📊 Panel de Control</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
+                            <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
+                            <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
+                            <li><a href="#/compras" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🛒 Compras</a></li>
                             ${menuAdmin}
                         </ul>
                     </div>
@@ -65,13 +66,11 @@ export const Dashboard = {
     },
 
     attachEvents: () => {
-        // Cerrar Sesión
         document.getElementById('btn-logout-sidebar').addEventListener('click', () => {
             localStorage.clear();
             window.location.hash = '#/login';
         });
 
-        // Alternar Tema
         const btnTheme = document.getElementById('btn-theme-toggle');
         btnTheme.addEventListener('click', () => {
             const htmlElement = document.documentElement;
