@@ -17,7 +17,6 @@ export const Inventario = {
         return `
             <div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color);">
                 
-                <!-- SIDEBAR -->
                 <nav class="sidebar" style="width: 260px; background-color: var(--surface); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
                     <div>
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
@@ -26,6 +25,9 @@ export const Inventario = {
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
+                            <li><a href="#/ventas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💰 Facturación</a></li>
+                            <li><a href="#/historial-facturas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🧾 Historial Ventas</a></li>
+                            <li><a href="#/cartera" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💳 Cartera</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                             <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
                             <li><a href="#/inventario" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">📦 Inventario</a></li>
@@ -48,7 +50,6 @@ export const Inventario = {
                     </div>
                 </nav>
 
-                <!-- CONTENIDO PRINCIPAL -->
                 <main style="flex: 1; display: flex; flex-direction: column; padding: 40px; overflow-y: auto;">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;">
                         <div>
@@ -61,7 +62,6 @@ export const Inventario = {
                         </div>
                     </div>
 
-                    <!-- BARRA DE ACCIONES SUPERIOR -->
                     <div style="background: var(--surface); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                         <div style="display: flex; gap: 10px; flex: 1; max-width: 500px;">
                             <input type="text" id="input-search" placeholder="Buscar por código o nombre..." style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none;">
@@ -73,7 +73,6 @@ export const Inventario = {
                         </div>
                     </div>
 
-                    <!-- TABLA -->
                     <div style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                             <thead style="background: var(--bg-color); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -93,7 +92,6 @@ export const Inventario = {
                         </table>
                     </div>
 
-                    <!-- PAGINACIÓN -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 0 10px;">
                         <span id="page-info" style="color: var(--text-muted); font-size: 0.9rem;">Mostrando página 1 de 1</span>
                         <div style="display: flex; gap: 10px;">

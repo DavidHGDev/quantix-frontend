@@ -17,7 +17,6 @@ export const Compras = {
         return `
             <div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color);">
                 
-                <!-- SIDEBAR -->
                 <nav class="sidebar" style="width: 260px; background-color: var(--surface); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
                     <div>
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
@@ -26,6 +25,9 @@ export const Compras = {
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
+                            <li><a href="#/ventas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💰 Facturación</a></li>
+                            <li><a href="#/historial-facturas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🧾 Historial Ventas</a></li>
+                            <li><a href="#/cartera" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💳 Cartera</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                             <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
                             <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
@@ -48,7 +50,6 @@ export const Compras = {
                     </div>
                 </nav>
 
-                <!-- CONTENIDO PRINCIPAL -->
                 <main style="flex: 1; display: flex; flex-direction: column; padding: 40px; overflow-y: auto;">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;">
                         <div>
@@ -58,14 +59,12 @@ export const Compras = {
                         <button id="btn-nueva-orden" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2); transition: 0.2s;">+ Nueva Orden</button>
                     </div>
 
-                    <!-- BARRA DE ACCIONES SUPERIOR -->
                     <div style="background: var(--surface); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                         <div style="display: flex; gap: 10px;">
                             <button id="btn-export-csv" style="background: var(--bg-color); color: #059669; border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer;">📥 Exportar Excel</button>
                         </div>
                     </div>
 
-                    <!-- TABLA -->
                     <div style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                             <thead style="background: var(--bg-color); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -85,7 +84,6 @@ export const Compras = {
                     </div>
                 </main>
 
-                <!-- MODAL ORDEN DE COMPRA -->
                 <div id="modal-orden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000;">
                     <div style="background: var(--surface); padding: 35px; border-radius: 16px; width: 95%; max-width: 800px; border: 1px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column;">
                         <h2 id="modal-titulo-orden" style="margin-bottom: 25px; color: var(--text-color); font-size: 1.5rem;">Nueva Orden de Compra</h2>
@@ -93,7 +91,6 @@ export const Compras = {
                         <form id="form-orden" style="display: flex; flex-direction: column; gap: 20px;">
                             <input type="hidden" id="orden-id">
                             
-                            <!-- DATOS CABECERA -->
                             <div style="display: flex; gap: 15px; align-items: center;">
                                 <div style="flex: 1;">
                                     <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; display: block;">Proveedor</label>
@@ -107,14 +104,12 @@ export const Compras = {
                                 </div>
                             </div>
 
-                            <!-- DETALLE PRODUCTOS -->
                             <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; background: var(--bg-color);">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                     <h3 style="font-size: 1.1rem; color: var(--text-color); margin: 0;">Productos</h3>
                                     <button type="button" id="btn-add-producto" style="background: var(--surface); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;">+ Agregar Fila</button>
                                 </div>
                                 
-                                <!-- Encabezados fila adaptativos -->
                                 <div style="display: flex; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
                                     <div style="flex: 3; min-width: 0; font-weight: bold; font-size: 0.85rem; color: var(--text-muted);">Producto</div>
                                     <div style="flex: 1; min-width: 0; font-weight: bold; font-size: 0.85rem; color: var(--text-muted);">Cantidad</div>
@@ -123,9 +118,7 @@ export const Compras = {
                                     <div style="width: 35px; flex-shrink: 0;"></div>
                                 </div>
 
-                                <div id="productos-container" style="display: flex; flex-direction: column; gap: 10px;">
-                                    <!-- Filas dinámicas inyectadas por JS -->
-                                </div>
+                                <div id="productos-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
                             </div>
 
                             <span id="modal-error-orden" style="color: #ef4444; font-size: 0.9rem; text-align: center; font-weight: 600;"></span>

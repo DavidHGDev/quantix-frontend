@@ -2,22 +2,15 @@ export const Dashboard = {
     render: () => {
         const usuarioStr = localStorage.getItem('usuario');
         const usuario = usuarioStr ? JSON.parse(usuarioStr) : { name: 'Usuario', role: 'Desconocido', email: '' };
-
         const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
         const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
-
-        const menuAdmin = usuario.role === 'ADMIN' 
-            ? `<li><a href="#/usuarios" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">👥 Gestión de Usuarios</a></li>` 
-            : '';
-
+        const menuAdmin = usuario.role === 'ADMIN' ? `<li><a href="#/usuarios" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">👥 Gestión de Usuarios</a></li>` : '';
         const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
 
         return `
             <div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color);">
                 
-                <!-- SIDEBAR -->
                 <nav class="sidebar" style="width: 260px; background-color: var(--surface); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
-                    
                     <div>
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
                             <div style="background: var(--primary); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; font-size: 1.2rem;">Q</div>
@@ -25,6 +18,9 @@ export const Dashboard = {
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">📊 Panel de Control</a></li>
+                            <li><a href="#/ventas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💰 Facturación</a></li>
+                            <li><a href="#/historial-facturas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🧾 Historial Ventas</a></li>
+                            <li><a href="#/cartera" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💳 Cartera</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                             <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
                             <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
@@ -33,14 +29,12 @@ export const Dashboard = {
                         </ul>
                     </div>
 
-                    <!-- FOOTER DEL SIDEBAR -->
                     <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
                         <div style="margin-bottom: 15px;">
-                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
+                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario} ${apellidoUsuario}</p>
                             <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email || ''}</p>
                             <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role || 'Sin Rol'}</span>
                         </div>
-                        
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
                             <a href="#/perfil" style="text-decoration: none; width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; text-align: left; display: block; box-sizing: border-box;">⚙️ Mi Perfil</a>
@@ -49,7 +43,6 @@ export const Dashboard = {
                     </div>
                 </nav>
 
-                <!-- CONTENIDO PRINCIPAL -->
                 <main style="flex: 1; display: flex; flex-direction: column; padding: 40px; overflow-y: auto;">
                     <header style="margin-bottom: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;">
                         <h1 style="color: var(--text-color); font-size: 2rem;">Panel de Control</h1>

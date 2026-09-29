@@ -8,6 +8,9 @@ import { Clientes } from '../views/Clientes.js';
 import { Proveedores } from '../views/Proveedores.js';
 import { Inventario } from '../views/Inventario.js';
 import { Compras } from '../views/Compras.js';
+import { Ventas } from '../views/Ventas.js';
+import { Cartera } from '../views/Cartera.js';
+import { HistorialFacturas } from '../views/HistorialFacturas.js';
 
 // Diccionario de rutas disponibles
 const routes = {
@@ -20,7 +23,10 @@ const routes = {
     '#/clientes': Clientes,
     '#/proveedores': Proveedores,
     '#/inventario': Inventario,
-    '#/compras': Compras
+    '#/compras': Compras,
+    '#/ventas': Ventas,
+    '#/cartera': Cartera,
+    '#/historial-facturas': HistorialFacturas,
 };
 
 export const router = () => {

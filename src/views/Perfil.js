@@ -13,7 +13,6 @@ export const Perfil = {
         return `
             <div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color);">
                 
-                <!-- SIDEBAR -->
                 <nav class="sidebar" style="width: 260px; background-color: var(--surface); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
                     <div>
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
@@ -22,6 +21,9 @@ export const Perfil = {
                         </div>
                         <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
                             <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
+                            <li><a href="#/ventas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💰 Facturación</a></li>
+                            <li><a href="#/historial-facturas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🧾 Historial Ventas</a></li>
+                            <li><a href="#/cartera" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💳 Cartera</a></li>
                             <li><a href="#/clientes" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏷️ Clientes</a></li>
                             <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
                             <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
@@ -30,7 +32,6 @@ export const Perfil = {
                         </ul>
                     </div>
 
-                    <!-- FOOTER DEL SIDEBAR -->
                     <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
                         <div style="margin-bottom: 15px;">
                             <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
@@ -39,13 +40,12 @@ export const Perfil = {
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
-                            <a href="#/perfil" style="text-decoration: none; width: 100%; background: var(--primary); color: white; padding: 12px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2); display: block; box-sizing: border-box;">⚙️ Mi Perfil</a>
+                            <a href="#/perfil" style="text-decoration: none; width: 100%; background: var(--primary); color: white; padding: 12px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2); display: block; box-sizing: border-box;">⚙️️ Mi Perfil</a>
                             <button id="btn-logout-sidebar" style="width: 100%; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">🚪 Cerrar Sesión</button>
                         </div>
                     </div>
                 </nav>
 
-                <!-- CONTENIDO PRINCIPAL -->
                 <main style="flex: 1; padding: 40px; overflow-y: auto;">
                     <header style="margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;">
                         <h1 style="color: var(--text-color); font-size: 2rem;">Configuración de Perfil</h1>
@@ -53,8 +53,6 @@ export const Perfil = {
                     </header>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1000px;">
-                        
-                        <!-- TARJETA 1 -->
                         <div style="background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.02); align-self: start;">
                             <h2 style="margin-bottom: 20px; font-size: 1.2rem; color: var(--text-color);">Datos Personales</h2>
                             <form id="form-perfil" style="display: flex; flex-direction: column; gap: 15px;">
@@ -73,7 +71,6 @@ export const Perfil = {
                             </form>
                         </div>
 
-                        <!-- TARJETA 2 -->
                         <div style="background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.02); align-self: start;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                                 <h2 style="font-size: 1.2rem; color: var(--text-color);">Seguridad</h2>
