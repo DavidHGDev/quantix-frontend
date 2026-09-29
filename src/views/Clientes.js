@@ -1,58 +1,61 @@
 import { fetchAPI } from '../utils/api.js';
+import { mostrarToast, mostrarConfirmacion } from '../utils/ui.js';
 
 export const Clientes = {
     render: () => {
         const usuarioStr = localStorage.getItem('usuario');
         const usuario = usuarioStr ? JSON.parse(usuarioStr) : { name: 'Usuario', role: 'Desconocido', email: '' };
 
-        if (!['ADMIN', 'VENDEDOR'].includes(usuario.role)) {
-            return `<div style="padding: 40px; color: red;"><h1>Acceso Denegado</h1></div>`;
-        }
-
         const nombreUsuario = usuario.name || usuario.firstName || 'Usuario';
         const apellidoUsuario = usuario.lastName ? ` ${usuario.lastName}` : '';
         const menuAdmin = usuario.role === 'ADMIN' ? `<li><a href="#/usuarios" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">👥 Gestión de Usuarios</a></li>` : '';
         const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️ Claro' : '🌙 Oscuro';
 
-        return `
-            <div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color);">
-                
-                <!-- SIDEBAR EXACTO AL DISEÑO -->
-                <nav class="sidebar" style="width: 260px; background-color: var(--surface); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
-                            <div style="background: var(--primary); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; font-size: 1.2rem;">Q</div>
-                            <h2 style="color: var(--text-color); letter-spacing: -0.5px;">Quantix</h2>
-                        </div>
-                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
-                            <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
-                            <li><a href="#/ventas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💰 Facturación</a></li>
-                            <li><a href="#/historial-facturas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🧾 Historial Ventas</a></li>
-                            <li><a href="#/cartera" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💳 Cartera</a></li>
-                            
-                            <!-- VISTA ACTIVA -->
-                            <li><a href="#/clientes" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">🏷️ Clientes</a></li>
-                            
-                            <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
-                            <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
-                            <li><a href="#/compras" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🛒 Compras</a></li>
-                            ${menuAdmin}
-                        </ul>
+        const sidebarHTML = `
+            <nav class="sidebar" style="width: 260px; background-color: var(--surface); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 40px;">
+                        <div style="background: var(--primary); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; font-size: 1.2rem;">Q</div>
+                        <h2 style="color: var(--text-color); letter-spacing: -0.5px;">Quantix</h2>
                     </div>
-                    <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
-                        <div style="margin-bottom: 15px;">
-                            <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
-                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email || ''}</p>
-                            <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role || 'Sin Rol'}</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
-                            <a href="#/perfil" style="text-decoration: none; width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; text-align: left; display: block; box-sizing: border-box; transition: 0.2s;">⚙️ Mi Perfil</a>
-                            <button id="btn-logout-sidebar" style="width: 100%; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">🚪 Cerrar Sesión</button>
-                        </div>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
+                        <li><a href="#/dashboard" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📊 Panel de Control</a></li>
+                        <li><a href="#/ventas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💰 Facturación</a></li>
+                        <li><a href="#/historial-facturas" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🧾 Historial Ventas</a></li>
+                        <li><a href="#/cartera" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">💳 Cartera</a></li>
+                        <li><a href="#/clientes" style="text-decoration: none; color: white; background: var(--primary); padding: 12px 15px; display: block; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">🏷️ Clientes</a></li>
+                        <li><a href="#/proveedores" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🏢 Proveedores</a></li>
+                        <li><a href="#/inventario" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">📦 Inventario</a></li>
+                        <li><a href="#/compras" style="text-decoration: none; color: var(--text-color); padding: 12px 15px; display: block; border-radius: 8px; font-weight: 500; transition: 0.2s;">🛒 Compras</a></li>
+                        ${menuAdmin}
+                    </ul>
+                </div>
+                <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <p style="font-weight: bold; color: var(--text-color); font-size: 0.95rem;">${nombreUsuario}${apellidoUsuario}</p>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">${usuario.email || ''}</p>
+                        <span style="background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">Rol: ${usuario.role || 'Sin Rol'}</span>
                     </div>
-                </nav>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
+                        <button id="btn-logout-sidebar" style="width: 100%; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left;">🚪 Cerrar Sesión</button>
+                    </div>
+                </div>
+            </nav>
+        `;
 
+        let mainContent = '';
+
+        if (!['ADMIN', 'VENDEDOR'].includes(usuario.role)) {
+            mainContent = `
+                <main style="flex: 1; padding: 40px; overflow-y: auto;">
+                    <div style="background: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 15px 20px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px;">
+                        🚫 Acceso Denegado: Su rol no está permitido para visualizar o gestionar Clientes.
+                    </div>
+                </main>
+            `;
+        } else {
+            mainContent = `
                 <main style="flex: 1; display: flex; flex-direction: column; padding: 40px; overflow-y: auto;">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;">
                         <div>
@@ -62,10 +65,11 @@ export const Clientes = {
                         <button id="btn-nuevo-cliente" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);">+ Nuevo Cliente</button>
                     </div>
 
-                    <div style="background: var(--surface); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; display: flex; gap: 15px; align-items: center;">
-                        <input type="text" id="input-search" placeholder="Buscar por documento, email o nombre..." style="flex: 1; max-width: 500px; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none;">
+                    <div style="background: var(--surface); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                        <input type="text" id="input-search" placeholder="Buscar por documento, email o nombre..." style="flex: 1; min-width: 300px; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none;">
                         <button id="btn-buscar" style="background: var(--text-color); color: var(--surface); border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer;">🔍 Buscar</button>
                         <button id="btn-limpiar" style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer;">Limpiar</button>
+                        <button id="btn-export-csv" style="background: var(--bg-color); color: #059669; border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: auto;">📥 Excel</button>
                     </div>
 
                     <div style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;">
@@ -94,7 +98,6 @@ export const Clientes = {
                     </div>
                 </main>
 
-                <!-- MODALES -->
                 <!-- MODAL CLIENTE CRUD -->
                 <div id="modal-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000;">
                     <div style="background: var(--surface); padding: 35px; border-radius: 16px; width: 90%; max-width: 550px; border: 1px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
@@ -121,7 +124,6 @@ export const Clientes = {
                                 <input type="checkbox" id="isActive" name="isActive" style="width: 18px; height: 18px;">
                                 <label for="isActive" style="font-weight: 600; color: var(--text-color);">Cliente Activo en el Sistema</label>
                             </div>
-                            <span id="modal-error" style="color: #ef4444; font-size: 0.9rem; text-align: center; font-weight: 600;"></span>
                             <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
                                 <button type="button" id="btn-cerrar-modal" style="padding: 12px 20px; border: none; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: bold;">Cancelar</button>
                                 <button type="submit" style="padding: 12px 25px; border: none; background: var(--primary); color: white; border-radius: 8px; cursor: pointer; font-weight: bold;">Guardar Cliente</button>
@@ -152,7 +154,6 @@ export const Clientes = {
                                     <option value="TRANSFERENCIA">Transferencia</option>
                                 </select>
                             </div>
-                            <span id="modal-error-abono" style="color: #ef4444; font-size: 0.9rem; text-align: center; font-weight: 600;"></span>
                             <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
                                 <button type="button" id="btn-cerrar-abono" style="padding: 12px 20px; border: none; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-weight: bold;">Cancelar</button>
                                 <button type="submit" style="padding: 12px 25px; border: none; background: #059669; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;">Aplicar Pago</button>
@@ -160,18 +161,20 @@ export const Clientes = {
                         </form>
                     </div>
                 </div>
+            `;
+        }
 
-            </div>
-        `;
+        return `<div style="display: flex; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color);">${sidebarHTML}${mainContent}</div>`;
     },
 
     attachEvents: () => {
         const usuarioLocal = JSON.parse(localStorage.getItem('usuario'));
-        if (!usuarioLocal) return window.location.hash = '#/login';
+        if (!usuarioLocal || !['ADMIN', 'VENDEDOR'].includes(usuarioLocal.role)) return;
         const isAdmin = usuarioLocal.role === 'ADMIN';
 
         let currentPage = 1;
         let querySearch = '';
+        let globalClientes = [];
 
         document.getElementById('btn-logout-sidebar').addEventListener('click', () => { localStorage.clear(); window.location.hash = '#/login'; });
         document.getElementById('btn-theme-toggle').addEventListener('click', (e) => {
@@ -191,66 +194,70 @@ export const Clientes = {
 
         const cargarClientes = async () => {
             try {
-                const url = `/clients?page=${currentPage}&limit=10${querySearch ? `&search=${encodeURIComponent(querySearch)}` : ''}`;
-                const result = await fetchAPI(url);
+                const params = new URLSearchParams({ page: currentPage, limit: 10 });
+                if (querySearch) params.append('search', querySearch);
+
+                const result = await fetchAPI(`/clients?${params.toString()}`);
+                const data = result.data || result;
+                const pagination = result.pagination || { page: 1, totalPages: 1, hasMore: false };
+                globalClientes = data;
                 
-                if (result.data.length === 0) {
+                if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5" style="padding: 20px; text-align: center; color: var(--text-muted);">No se encontraron clientes.</td></tr>`;
-                } else {
-                    tbody.innerHTML = result.data.map(c => {
-                        const deudas = c.creditos || []; 
-                        const deudaTotal = deudas.reduce((acc, curr) => acc + Number(curr.saldoCredito), 0);
-
-                        return `
-                        <tr style="border-bottom: 1px solid var(--border-color); ${!c.isActive ? 'opacity: 0.6;' : ''}">
-                            <td style="padding: 18px 20px; font-weight: 600; color: var(--text-color);">
-                                ${c.firstName} ${c.lastName || ''} <br>
-                                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">${c.email || 'Sin correo'}</span>
-                            </td>
-                            <td style="padding: 18px 20px; color: var(--text-muted);">${c.tipoDocumento} - ${c.documento}</td>
-                            <td style="padding: 18px 20px; color: ${deudaTotal > 0 ? '#ef4444' : 'var(--text-muted)'}; font-weight: bold;">
-                                $${deudaTotal.toLocaleString('es-CO')}
-                            </td>
-                            <td style="padding: 18px 20px;">
-                                ${c.isActive ? '<span style="color: #059669; font-weight: 700;">🟢 Activo</span>' : '<span style="color: #ef4444; font-weight: 700;">🔴 Inactivo</span>'}
-                            </td>
-                            <td style="padding: 18px 20px; display: flex; gap: 8px;">
-                                <button class="btn-editar" data-client='${JSON.stringify(c)}' style="cursor: pointer; background: #eff6ff; border: 1px solid #bfdbfe; color: #3b82f6; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s;">✏️ Editar</button>
-                                ${deudaTotal > 0 ? `<button class="btn-pagar" data-client='${JSON.stringify(c)}' style="cursor: pointer; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">💸 Abonar</button>` : ''}
-                            </td>
-                        </tr>
-                    `}).join('');
-
-                    document.querySelectorAll('.btn-editar').forEach(btn => btn.addEventListener('click', (e) => abrirModal(JSON.parse(e.target.dataset.client))));
-                    document.querySelectorAll('.btn-pagar').forEach(btn => btn.addEventListener('click', (e) => abrirModalAbono(JSON.parse(e.target.dataset.client))));
+                    return;
                 }
 
-                pageInfo.textContent = `Mostrando página ${result.pagination.page} de ${result.pagination.totalPages}`;
-                btnPrev.disabled = result.pagination.page <= 1;
-                btnNext.disabled = !result.pagination.hasMore;
+                tbody.innerHTML = data.map(c => {
+                    const deudas = c.creditos || []; 
+                    const deudaTotal = deudas.reduce((acc, curr) => acc + Number(curr.saldoCredito), 0);
 
-            } catch (error) { tbody.innerHTML = `<tr><td colspan="5" style="color: red; text-align: center; padding: 20px;">Error: ${error.message}</td></tr>`; }
+                    return `
+                    <tr style="border-bottom: 1px solid var(--border-color); ${!c.isActive ? 'opacity: 0.6;' : ''}">
+                        <td style="padding: 18px 20px; font-weight: 600; color: var(--text-color);">
+                            ${c.firstName} ${c.lastName || ''} <br>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">${c.email || 'Sin correo'}</span>
+                        </td>
+                        <td style="padding: 18px 20px; color: var(--text-muted);">${c.tipoDocumento} - ${c.documento}</td>
+                        <td style="padding: 18px 20px; color: ${deudaTotal > 0 ? '#ef4444' : 'var(--text-muted)'}; font-weight: bold;">
+                            $${deudaTotal.toLocaleString('es-CO')}
+                        </td>
+                        <td style="padding: 18px 20px;">
+                            ${c.isActive ? '<span style="color: #059669; font-weight: 700;">🟢 Activo</span>' : '<span style="color: #ef4444; font-weight: 700;">🔴 Inactivo</span>'}
+                        </td>
+                        <td style="padding: 18px 20px; display: flex; gap: 8px;">
+                            <button class="btn-editar" data-client='${JSON.stringify(c)}' style="cursor: pointer; background: #eff6ff; border: 1px solid #bfdbfe; color: #3b82f6; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s;">✏️ Editar</button>
+                            ${deudaTotal > 0 ? `<button class="btn-pagar" data-client='${JSON.stringify(c)}' style="cursor: pointer; background: #ecfdf5; border: 1px solid #a7f3d0; color: #059669; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">💸 Abonar</button>` : ''}
+                        </td>
+                    </tr>
+                `}).join('');
+
+                document.querySelectorAll('.btn-editar').forEach(btn => btn.addEventListener('click', (e) => abrirModal(JSON.parse(e.target.dataset.client))));
+                document.querySelectorAll('.btn-pagar').forEach(btn => btn.addEventListener('click', (e) => abrirModalAbono(JSON.parse(e.target.dataset.client))));
+
+                pageInfo.textContent = `Mostrando página ${pagination.page} de ${pagination.totalPages}`;
+                btnPrev.disabled = pagination.page <= 1;
+                btnNext.disabled = !pagination.hasMore && pagination.page >= pagination.totalPages;
+
+            } catch (error) { mostrarToast(`Error: ${error.message}`, 'error'); }
         };
 
         btnPrev.addEventListener('click', () => { currentPage--; cargarClientes(); });
         btnNext.addEventListener('click', () => { currentPage++; cargarClientes(); });
 
-        document.getElementById('btn-buscar').addEventListener('click', () => {
-            querySearch = document.getElementById('input-search').value.trim();
-            currentPage = 1;
-            cargarClientes();
-        });
+        document.getElementById('btn-buscar').addEventListener('click', () => { querySearch = document.getElementById('input-search').value.trim(); currentPage = 1; cargarClientes(); });
+        document.getElementById('btn-limpiar').addEventListener('click', () => { document.getElementById('input-search').value = ''; querySearch = ''; currentPage = 1; cargarClientes(); });
 
-        document.getElementById('btn-limpiar').addEventListener('click', () => {
-            document.getElementById('input-search').value = '';
-            querySearch = '';
-            currentPage = 1;
-            cargarClientes();
+        document.getElementById('btn-export-csv').addEventListener('click', () => {
+            if (!globalClientes.length) return mostrarToast('No hay datos para exportar', 'error');
+            const encabezados = "Nombre;Apellido;Documento;Email;Telefono;Estado\n";
+            const filas = globalClientes.map(c => `"${c.firstName}";"${c.lastName||''}";"${c.tipoDocumento}-${c.documento}";"${c.email||''}";"${c.phone||''}";"${c.isActive?'Activo':'Inactivo'}"`).join('\n');
+            const blob = new Blob(["\uFEFF" + encabezados + filas], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.setAttribute('download', `Clientes.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         });
 
         // MODAL CRUD CLIENTE
         const abrirModal = (cliente = null) => {
-            document.getElementById('modal-error').textContent = '';
             form.reset();
             const estadoContainer = document.getElementById('estado-container');
 
@@ -288,8 +295,10 @@ export const Clientes = {
             try {
                 if (id) await fetchAPI(`/clients/${id}`, { method: 'PATCH', body: JSON.stringify(payload) });
                 else await fetchAPI(`/clients`, { method: 'POST', body: JSON.stringify(payload) });
-                modal.style.display = 'none'; cargarClientes();
-            } catch (error) { document.getElementById('modal-error').textContent = error.message; }
+                modal.style.display = 'none'; 
+                mostrarToast(id ? 'Cliente actualizado' : 'Cliente registrado', 'success');
+                cargarClientes();
+            } catch (error) { mostrarToast(error.message, 'error'); }
         });
 
         // MODAL ABONOS (VISTA 360)
@@ -298,7 +307,6 @@ export const Clientes = {
         const inputMonto = document.getElementById('montoAbono');
 
         const abrirModalAbono = (cliente) => {
-            document.getElementById('modal-error-abono').textContent = '';
             formAbono.reset();
             document.getElementById('abono-cliente-nombre').textContent = `${cliente.firstName} ${cliente.lastName || ''} (${cliente.documento})`;
             
@@ -326,15 +334,17 @@ export const Clientes = {
             const idCredito = selectCredito.value;
             const monto = Number(inputMonto.value);
 
-            if (monto > maxSaldoPermitido) return document.getElementById('modal-error-abono').textContent = `El abono no puede superar $${maxSaldoPermitido.toLocaleString()}`;
+            if (monto > maxSaldoPermitido) return mostrarToast(`El abono no puede superar $${maxSaldoPermitido.toLocaleString()}`, 'error');
 
-            const payload = { montoAbono: monto, metodoPago: document.getElementById('metodoPago').value };
-
-            try {
-                await fetchAPI(`/sales/credits/${idCredito}/payments`, { method: 'POST', body: JSON.stringify(payload) });
-                modalAbono.style.display = 'none';
-                cargarClientes(); 
-            } catch (error) { document.getElementById('modal-error-abono').textContent = error.message; }
+            mostrarConfirmacion(`¿Confirmas el registro de este abono por $${monto.toLocaleString()}?`, async () => {
+                const payload = { montoAbono: monto, metodoPago: document.getElementById('metodoPago').value };
+                try {
+                    await fetchAPI(`/sales/credits/${idCredito}/payments`, { method: 'POST', body: JSON.stringify(payload) });
+                    modalAbono.style.display = 'none';
+                    mostrarToast('Abono registrado exitosamente', 'success');
+                    cargarClientes(); 
+                } catch (error) { mostrarToast(error.message, 'error'); }
+            });
         });
 
         cargarClientes();
