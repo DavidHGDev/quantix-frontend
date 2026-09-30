@@ -1,4 +1,5 @@
 import { fetchAPI } from '../utils/api.js';
+import { mostrarToast } from '../utils/ui.js';
 
 export const Inventario = {
     render: () => {
@@ -275,7 +276,7 @@ export const Inventario = {
         });
 
         document.getElementById('btn-export-csv').addEventListener('click', () => {
-            if (!globalProducts.length) return alert('No hay datos para exportar en esta página');
+            if (!globalProducts.length) return mostrarToast('No hay datos para exportar en esta página');
             
             const encabezados = "Codigo;Producto;Categoria;Precio;Stock;Estado\n";
             const filas = globalProducts.map(p => 

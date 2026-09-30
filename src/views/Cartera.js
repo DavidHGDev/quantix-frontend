@@ -38,6 +38,7 @@ export const Cartera = {
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
+                        <a href="#/perfil" style="text-decoration: none; width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; text-align: left; display: block; box-sizing: border-box;">⚙️ Mi Perfil</a>
                         <button id="btn-logout-sidebar" style="width: 100%; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left;">🚪 Cerrar Sesión</button>
                     </div>
                 </div>
@@ -64,10 +65,11 @@ export const Cartera = {
                         </div>
                     </div>
 
-                    <div style="background: var(--surface); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; display: flex; gap: 15px;">
+                    <div style="background: var(--surface); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; display: flex; align-items: center; flex-wrap: wrap; gap: 15px;">
                         <input type="text" id="input-search" placeholder="Buscar por ID cliente..." style="flex: 1; max-width: 400px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none;">
                         <button id="btn-buscar" style="background: var(--text-color); color: var(--surface); border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer;">Buscar</button>
                         <button id="btn-reset" style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; cursor: pointer;">Limpiar</button>
+                        <button id="btn-export-csv" style="background: var(--bg-color); color: #059669; border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: auto;">📥 Exportar Excel</button>
                     </div>
 
                     <div style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
@@ -137,6 +139,7 @@ export const Cartera = {
         if (!usuarioLocal || !['ADMIN', 'VENDEDOR'].includes(usuarioLocal.role)) return;
 
         let querySearch = '';
+        let globalCreditos = [];
 
         document.getElementById('btn-logout-sidebar').addEventListener('click', () => { localStorage.clear(); window.location.hash = '#/login'; });
         document.getElementById('btn-theme-toggle').addEventListener('click', (e) => {
@@ -153,6 +156,7 @@ export const Cartera = {
             try {
                 const url = `/sales/credits${querySearch ? `?clienteId=${encodeURIComponent(querySearch)}` : ''}`;
                 const creditos = await fetchAPI(url); 
+                globalCreditos = creditos;
                 
                 if (creditos.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--text-muted);">No hay cuentas por cobrar activas.</td></tr>`;
@@ -182,6 +186,18 @@ export const Cartera = {
 
         document.getElementById('btn-buscar').addEventListener('click', () => { querySearch = document.getElementById('input-search').value.trim(); cargarCreditos(); });
         document.getElementById('btn-reset').addEventListener('click', () => { document.getElementById('input-search').value = ''; querySearch = ''; cargarCreditos(); });
+
+        document.getElementById('btn-export-csv').addEventListener('click', () => {
+            if (!globalCreditos.length) return mostrarToast('No hay datos para exportar', 'error');
+            const encabezados = "Factura;Cliente;Documento;Fecha Emision;Deuda Inicial;Saldo Actual\n";
+            const filas = globalCreditos.map(c => {
+                const fecha = new Date(c.factura.fecha).toLocaleDateString('es-CO');
+                return `"${c.facturaId}";"${c.cliente.firstName} ${c.cliente.lastName || ''}";"${c.cliente.documento}";"${fecha}";${c.montoOriginal};${c.saldoCredito}`;
+            }).join('\n');
+            const blob = new Blob(["\uFEFF" + encabezados + filas], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.setAttribute('download', `Cartera_Cuentas_Cobrar.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        });
 
         const abrirModalAbono = (credito) => {
             form.reset();

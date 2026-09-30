@@ -1,4 +1,5 @@
 import { fetchAPI } from '../utils/api.js';
+import { mostrarToast } from '../utils/ui.js';
 
 export const Ventas = {
     render: () => {
@@ -202,8 +203,8 @@ export const Ventas = {
             const clienteId = document.getElementById('pos-cliente').value;
             const metodoDePago = document.getElementById('pos-metodo').value;
 
-            if (!clienteId) return alert("Debe seleccionar un cliente");
-            if (carrito.length === 0) return alert("El carrito está vacío");
+            if (!clienteId) return mostrarToast("Debe seleccionar un cliente");
+            if (carrito.length === 0) return mostrarToast("El carrito está vacío");
 
             const payload = {
                 clienteId: Number(clienteId),
@@ -213,13 +214,14 @@ export const Ventas = {
 
             try {
                 await fetchAPI('/sales/invoices', { method: 'POST', body: JSON.stringify(payload) });
-                alert(`Factura registrada con éxito. ${metodoDePago === 'CREDITO' ? 'Se ha creado una cuenta por cobrar en Cartera.' : ''}`);
+                const mensajeCredito = metodoDePago === 'CREDITO' ? ' Se ha creado una cuenta por cobrar en Cartera.' : '';
+                mostrarToast(`Factura registrada con éxito.${mensajeCredito}`, 'success');
                 carrito = [];
                 document.getElementById('pos-cliente').value = '';
                 document.getElementById('pos-search').value = '';
                 await cargarDependencias();
                 renderCarrito();
-            } catch (err) { alert(err.message); }
+            } catch (err) { mostrarToast("Error al cargar datos del POS", "error"); }
         });
 
         cargarDependencias();

@@ -1,4 +1,5 @@
 import { fetchAPI } from '../utils/api.js';
+import { mostrarToast } from '../utils/ui.js';
 
 export const HistorialFacturas = {
     render: () => {
@@ -167,7 +168,7 @@ export const HistorialFacturas = {
                             try {
                                 const fac = await fetchAPI(`/sales/invoices/${e.target.dataset.id}`);
                                 abrirModal(fac);
-                            } catch (error) { alert("Error al cargar detalles"); }
+                            } catch (error) { mostrarToast("Error al cargar detalles") }
                         });
                     });
                 }
@@ -205,7 +206,7 @@ export const HistorialFacturas = {
         document.getElementById('btn-cerrar-modal').addEventListener('click', () => modal.style.display = 'none');
 
         document.getElementById('btn-export-csv').addEventListener('click', () => {
-            if (!globalInvoices.length) return alert('No hay datos');
+            if (!globalInvoices.length) return mostrarToast("No hay datos");
             const encabezados = "Factura;Fecha;Cliente;Metodo;Total\n";
             const filas = globalInvoices.map(f => `"${f.id}";"${new Date(f.fecha).toLocaleDateString('es-CO')}";"${f.cliente.firstName} ${f.cliente.lastName||''}";"${f.metodoDePago}";${f.totalPagar}`).join('\n');
             const blob = new Blob(["\uFEFF" + encabezados + filas], { type: 'text/csv;charset=utf-8;' });
