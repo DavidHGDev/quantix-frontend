@@ -45,7 +45,7 @@ export const Inventario = {
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <button id="btn-theme-toggle" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left; transition: 0.2s;">${currentTheme}</button>
-                            <a href="#/perfil" style="text-decoration: none; width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; text-align: left; display: block; box-sizing: border-box;">⚙️ Mi Perfil</a>
+                            <a href="#/perfil" style="text-decoration: none; width: 100%; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; border-radius: 8px; font-weight: 600; text-align: left; display: block; box-sizing: border-box;">⚙️️ Mi Perfil</a>
                             <button id="btn-logout-sidebar" style="width: 100%; background: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: left;">🚪 Cerrar Sesión</button>
                         </div>
                     </div>
@@ -122,9 +122,13 @@ export const Inventario = {
                                 <input type="number" id="priceVenta" name="priceVenta" placeholder="Precio de Venta *" step="0.01" required style="flex:1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none;">
                             </div>
 
-                            <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px;">
-                                <p style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">Proveedores Asociados (Opcional)</p>
-                                <div id="proveedores-checkboxes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 120px; overflow-y: auto;">
+                            <!-- CONTENEDOR DE PROVEEDORES REDISEÑADO -->
+                            <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin: 0;">Proveedores Asociados (Opcional)</p>
+                                    <input type="text" id="buscador-prov-modal" placeholder="🔍 Buscar NIT o Nombre..." style="padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-size: 0.8rem; outline: none; width: 200px;">
+                                </div>
+                                <div id="proveedores-checkboxes" style="display: flex; flex-direction: column; gap: 5px; max-height: 150px; overflow-y: auto; padding-right: 5px;">
                                     <!-- Checkboxes inyectados por JS -->
                                 </div>
                             </div>
@@ -195,7 +199,6 @@ export const Inventario = {
             try {
                 // 1. Cargar Categorías
                 const resCat = await fetchAPI('/inventory/categories');
-                // Fallback de seguridad: si es array lo usamos, sino buscamos .data, sino []
                 const categorias = Array.isArray(resCat) ? resCat : (resCat?.data || []);
                 const catSelect = document.getElementById('categoriaId');
                 
@@ -204,8 +207,8 @@ export const Inventario = {
                         categorias.map(c => `<option value="${c.id}">${c.nameCategorie}</option>`).join('');
                 }
 
-                // 2. Cargar Proveedores
-                const resProv = await fetchAPI('/inventory/suppliers');
+                // 2. Cargar Proveedores y renderizarlos como bloques independientes
+                const resProv = await fetchAPI('/inventory/suppliers?limit=1000');
                 const proveedores = Array.isArray(resProv) ? resProv : (resProv?.data || []);
                 const provContainer = document.getElementById('proveedores-checkboxes');
                 
@@ -214,24 +217,24 @@ export const Inventario = {
                         provContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; margin: 0; padding: 5px 0;">No hay proveedores registrados aún.</p>`;
                     } else {
                         provContainer.innerHTML = proveedores.map(p => `
-                            <label style="display: flex; align-items: center; gap: 8px; color: var(--text-color); font-size: 0.85rem;">
-                                <input type="checkbox" name="supplierIds" value="${p.id}" class="sup-checkbox">
-                                ${p.razonSocial}
+                            <label class="prov-item" data-nombre="${p.razonSocial.toLowerCase()}" data-doc="${p.documento.toLowerCase()}" style="display: flex; align-items: center; gap: 10px; color: var(--text-color); font-size: 0.85rem; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.2s; border: 1px solid transparent;">
+                                <input type="checkbox" name="supplierIds" value="${p.id}" class="sup-checkbox" style="width: 16px; height: 16px; cursor: pointer;">
+                                <span><strong>${p.documento}</strong> - ${p.razonSocial}</span>
                             </label>
                         `).join('');
                     }
                 }
             } catch (error) { 
-                console.error(error);
                 mostrarToast("Error al cargar categorías o proveedores", "error"); 
             }
         };
 
         const cargarProductos = async () => {
             try {
+                // Límite de 8 productos solicitado previamente
                 const params = new URLSearchParams({
                     page: currentPage,
-                    limit: 10,
+                    limit: 8,
                     all: isAdmin ? 'true' : 'false'
                 });
                 if (querySearch) params.append('search', querySearch);
@@ -308,15 +311,43 @@ export const Inventario = {
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         });
 
+        // ================== LOGICA MODAL Y BÚSQUEDA DE PROVEEDORES ==================
         const modalProd = document.getElementById('modal-producto');
         const formProd = document.getElementById('form-producto');
         const modalCat = document.getElementById('modal-categoria');
         const formCat = document.getElementById('form-categoria');
         const estadoContainerProd = document.getElementById('estado-container-prod');
+        const buscadorProvModal = document.getElementById('buscador-prov-modal');
+
+        // Búsqueda en tiempo real de proveedores
+        buscadorProvModal.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            document.querySelectorAll('.prov-item').forEach(lbl => {
+                const nombre = lbl.dataset.nombre;
+                const doc = lbl.dataset.doc;
+                if (nombre.includes(term) || doc.includes(term)) {
+                    lbl.style.display = 'flex';
+                } else {
+                    lbl.style.display = 'none';
+                }
+            });
+        });
 
         const abrirModalProducto = (p = null) => {
             document.getElementById('modal-error-prod').textContent = '';
             formProd.reset();
+            buscadorProvModal.value = ''; // Limpiar buscador
+            
+            // Restablecer estilos de todos los proveedores
+            const provContainer = document.getElementById('proveedores-checkboxes');
+            const allProvLabels = document.querySelectorAll('.prov-item');
+            
+            allProvLabels.forEach(lbl => {
+                lbl.style.display = 'flex';
+                lbl.style.background = 'transparent';
+                lbl.style.borderColor = 'transparent';
+                lbl.querySelector('.sup-checkbox').checked = false;
+            });
 
             if (p) {
                 document.getElementById('modal-titulo-prod').textContent = 'Editar Producto';
@@ -333,10 +364,28 @@ export const Inventario = {
                     estadoContainerProd.style.display = 'none';
                 }
 
+                // Lógica de marcado y reordenamiento dinámico
                 const supplierIds = p.suppliers.map(s => s.id);
-                document.querySelectorAll('.sup-checkbox').forEach(cb => {
-                    cb.checked = supplierIds.includes(Number(cb.value));
+                const seleccionados = [];
+                const noSeleccionados = [];
+
+                allProvLabels.forEach(lbl => {
+                    const cb = lbl.querySelector('.sup-checkbox');
+                    if (supplierIds.includes(Number(cb.value))) {
+                        cb.checked = true;
+                        lbl.style.background = 'var(--surface)';
+                        lbl.style.borderColor = 'var(--border-color)';
+                        seleccionados.push(lbl); // Lo separamos si está seleccionado
+                    } else {
+                        noSeleccionados.push(lbl); // Lo separamos si NO está seleccionado
+                    }
                 });
+
+                // Vaciar contenedor y volver a inyectar (Los seleccionados quedan de primeros)
+                provContainer.innerHTML = '';
+                seleccionados.forEach(node => provContainer.appendChild(node));
+                noSeleccionados.forEach(node => provContainer.appendChild(node));
+
             } else {
                 document.getElementById('modal-titulo-prod').textContent = 'Nuevo Producto';
                 document.getElementById('prod-id').value = '';

@@ -135,7 +135,9 @@ export const Compras = {
                                     <div style="width: 35px; flex-shrink: 0;"></div>
                                 </div>
 
-                                <div id="productos-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                                <div id="productos-container" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <!-- Filas de productos inyectadas aquí -->
+                                </div>
                             </div>
 
                             <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
@@ -158,7 +160,7 @@ export const Compras = {
         let currentPage = 1;
         let querySearch = '';
         let globalOrders = [];
-        let productosCatalogo = [];
+        let productosCatalogo = []; // Ahora se carga dinámicamente según el proveedor
 
         document.getElementById('btn-logout-sidebar').addEventListener('click', () => { localStorage.clear(); window.location.hash = '#/login'; });
         document.getElementById('btn-theme-toggle').addEventListener('click', (e) => {
@@ -175,15 +177,13 @@ export const Compras = {
         const form = document.getElementById('form-orden');
         const containerProductos = document.getElementById('productos-container');
 
+        // Solo cargamos los proveedores al iniciar
         const cargarDependencias = async () => {
             try {
                 const proveedores = await fetchAPI('/inventory/suppliers?limit=1000');
                 const provData = proveedores.data || proveedores;
                 document.getElementById('proveedorId').innerHTML = `<option value="">Seleccione Proveedor...</option>` + 
                     provData.map(p => `<option value="${p.id}">${p.documento} - ${p.razonSocial}</option>`).join('');
-
-                const resProd = await fetchAPI('/inventory/products?limit=1000');
-                productosCatalogo = resProd.data || [];
             } catch (error) { mostrarToast("Error cargando dependencias", "error"); }
         };
 
@@ -301,12 +301,44 @@ export const Compras = {
             if (detalle) calcularTotalOrden();
         };
 
-        document.getElementById('btn-add-producto').addEventListener('click', () => agregarFilaProducto());
+        // LÓGICA DE ACTUALIZACIÓN DE PRODUCTOS AL CAMBIAR DE PROVEEDOR
+        document.getElementById('proveedorId').addEventListener('change', async (e) => {
+            const provId = e.target.value;
+            containerProductos.innerHTML = ''; // Limpiamos las filas si el proveedor cambia
+            document.getElementById('total-orden-display').textContent = '$0';
+            
+            if (!provId) {
+                productosCatalogo = [];
+                return;
+            }
 
-        const abrirModal = (orden = null, soloLectura = false) => {
+            try {
+                // Filtra enviando el ID del proveedor al backend
+                const resProd = await fetchAPI(`/inventory/products?limit=1000&supplierId=${provId}`);
+                productosCatalogo = resProd.data || [];
+                
+                if (productosCatalogo.length === 0) {
+                    mostrarToast("El proveedor seleccionado no tiene productos asociados.", "warning");
+                } else {
+                    agregarFilaProducto(); // Agrega la primera fila automáticamente
+                }
+            } catch (err) {
+                mostrarToast("Error obteniendo productos del proveedor", "error");
+            }
+        });
+
+        document.getElementById('btn-add-producto').addEventListener('click', () => {
+            const provId = document.getElementById('proveedorId').value;
+            if (!provId) return mostrarToast("Seleccione primero un proveedor.", "error");
+            if (productosCatalogo.length === 0) return mostrarToast("El proveedor seleccionado no tiene productos.", "error");
+            agregarFilaProducto();
+        });
+
+        const abrirModal = async (orden = null, soloLectura = false) => {
             form.reset();
             containerProductos.innerHTML = '';
             document.getElementById('total-orden-display').textContent = '$0';
+            productosCatalogo = [];
 
             const provSelect = document.getElementById('proveedorId');
             const btnGuardar = document.getElementById('btn-guardar-orden');
@@ -315,11 +347,19 @@ export const Compras = {
             if (orden) {
                 document.getElementById('modal-titulo-orden').textContent = soloLectura ? `Orden #ORD-${orden.id} (${orden.estado})` : 'Editar Orden PENDIENTE';
                 document.getElementById('orden-id').value = orden.id;
-                provSelect.value = orden.proveedorId;
                 
+                // Cargamos los productos específicos del proveedor de la orden para que el select pueda dibujarlos
+                try {
+                    const resProd = await fetchAPI(`/inventory/products?limit=1000&supplierId=${orden.proveedorId}`);
+                    productosCatalogo = resProd.data || [];
+                } catch (err) {
+                    mostrarToast("Error obteniendo productos", "error");
+                }
+
+                provSelect.value = orden.proveedorId;
                 orden.detalles.forEach(d => agregarFilaProducto(d, soloLectura));
                 
-                provSelect.disabled = soloLectura;
+                provSelect.disabled = true; // Se bloquea el cambio de proveedor en órdenes existentes
                 btnGuardar.style.display = soloLectura ? 'none' : 'block';
                 btnAdd.style.display = soloLectura ? 'none' : 'block';
             } else {
@@ -328,7 +368,6 @@ export const Compras = {
                 provSelect.disabled = false;
                 btnGuardar.style.display = 'block';
                 btnAdd.style.display = 'block';
-                agregarFilaProducto(); 
             }
 
             modal.style.display = 'flex';

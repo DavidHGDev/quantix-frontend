@@ -49,20 +49,36 @@ export const Ventas = {
                 </nav>
 
                 <main style="flex: 1; display: flex; padding: 20px; gap: 20px; overflow: hidden;">
-                    <div style="flex: 2; display: flex; flex-direction: column; background: var(--surface); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
-                        <div style="padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px;">
+                    <!-- COLUMNA IZQUIERDA: CATÁLOGO Y PAGINACIÓN -->
+                    <div style="flex: 2; display: flex; flex-direction: column; background: var(--surface); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); height: 100%;">
+                        <div style="padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px; flex-shrink: 0;">
                             <input type="text" id="pos-search" placeholder="Buscar por código de barras o nombre..." style="flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none; font-size: 1rem;">
                         </div>
-                        <div id="pos-products" style="flex: 1; overflow-y: auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; align-content: start;">
+                        
+                        <div id="pos-products" style="flex: 1; overflow-y: auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; align-content: start; min-height: 0;">
+                            <!-- Productos inyectados aquí -->
+                        </div>
+
+                        <!-- ZONA DE PAGINACIÓN -->
+                        <div style="padding: 15px 20px; border-top: 1px solid var(--border-color); background: var(--bg-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                            <button id="btn-prev-pos" disabled style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--surface); color: var(--text-color); cursor: pointer; font-weight: bold;">Anterior</button>
+                            <span id="page-info-pos" style="color: var(--text-muted); font-size: 0.9rem; font-weight: bold;">Página 1</span>
+                            <button id="btn-next-pos" disabled style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--surface); color: var(--text-color); cursor: pointer; font-weight: bold;">Siguiente</button>
                         </div>
                     </div>
 
-                    <div style="flex: 1; display: flex; flex-direction: column; background: var(--surface); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 350px;">
-                        <div style="padding: 20px; background: var(--bg-color); border-bottom: 1px solid var(--border-color);">
+                    <!-- COLUMNA DERECHA: CARRITO -->
+                    <div style="flex: 1; display: flex; flex-direction: column; background: var(--surface); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); min-width: 350px; height: 100%;">
+                        
+                        <div style="padding: 20px; background: var(--bg-color); border-bottom: 1px solid var(--border-color); flex-shrink: 0;">
                             <h2 style="color: var(--text-color); font-size: 1.2rem; margin-bottom: 15px;">Resumen de Venta</h2>
+                            
+                            <input type="text" id="buscador-cliente" placeholder="🔍 Buscar cliente (Cédula o Nombre)..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); outline: none; margin-bottom: 5px;">
+                            
                             <select id="pos-cliente" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none; margin-bottom: 10px;">
-                                <option value="">Seleccione Cliente...</option>
+                                <option value="">Cargando clientes...</option>
                             </select>
+
                             <select id="pos-metodo" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none;">
                                 <option value="EFECTIVO">Efectivo</option>
                                 <option value="TRANSFERENCIA">Transferencia</option>
@@ -70,16 +86,22 @@ export const Ventas = {
                             </select>
                         </div>
                         
-                        <div id="pos-cart" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+                        <div id="pos-cart" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; min-height: 0;">
                             <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 20px;">El carrito está vacío</p>
                         </div>
 
-                        <div style="padding: 20px; border-top: 1px solid var(--border-color); background: var(--bg-color);">
+                        <div style="padding: 20px; border-top: 1px solid var(--border-color); background: var(--bg-color); flex-shrink: 0;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <span style="font-weight: bold; color: var(--text-muted);">TOTAL A PAGAR</span>
                                 <span id="pos-total" style="font-size: 1.8rem; font-weight: bold; color: var(--primary);">$0</span>
                             </div>
-                            <button id="btn-facturar" style="width: 100%; padding: 15px; border: none; background: var(--primary); color: white; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer;">Generar Factura</button>
+                            
+                            <!-- MENSAJE DE VALIDACIÓN DE CRÉDITO -->
+                            <div id="warning-credito" style="display: none; background: #d1fae5; color: #065f46; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; text-align: center; border: 1px solid #10b981;">
+                                🚫 No se puede otorgar crédito al Consumidor Final. Asigne una cédula real.
+                            </div>
+
+                            <button id="btn-facturar" style="width: 100%; padding: 15px; border: none; background: var(--primary); color: white; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s;">Generar Factura</button>
                         </div>
                     </div>
                 </main>
@@ -88,8 +110,10 @@ export const Ventas = {
     },
 
     attachEvents: () => {
-        let catalogo = [];
         let carrito = [];
+        let currentPage = 1;
+        let querySearch = '';
+        let clientesGlobales = []; 
 
         document.getElementById('btn-logout-sidebar').addEventListener('click', () => { localStorage.clear(); window.location.hash = '#/login'; });
         document.getElementById('btn-theme-toggle').addEventListener('click', (e) => {
@@ -98,54 +122,128 @@ export const Ventas = {
             else { el.setAttribute('data-theme', 'dark'); e.target.textContent = '☀️ Claro'; }
         });
 
-        const cargarDependencias = async () => {
+        // ================== LÓGICA DE VALIDACIÓN DE CRÉDITO ==================
+        const validarReglasFacturacion = () => {
+            const clienteId = document.getElementById('pos-cliente').value;
+            const metodoDePago = document.getElementById('pos-metodo').value;
+            const btnFacturar = document.getElementById('btn-facturar');
+            const warningCredito = document.getElementById('warning-credito');
+
+            const clienteSeleccionado = clientesGlobales.find(c => c.id === Number(clienteId));
+
+            if (metodoDePago === 'CREDITO' && clienteSeleccionado?.documento === '222222222') {
+                warningCredito.style.display = 'block';
+                btnFacturar.disabled = true;
+                btnFacturar.style.opacity = '0.5';
+                btnFacturar.style.cursor = 'not-allowed';
+            } else {
+                warningCredito.style.display = 'none';
+                btnFacturar.disabled = false;
+                btnFacturar.style.opacity = '1';
+                btnFacturar.style.cursor = 'pointer';
+            }
+        };
+
+        document.getElementById('pos-cliente').addEventListener('change', validarReglasFacturacion);
+        document.getElementById('pos-metodo').addEventListener('change', validarReglasFacturacion);
+
+        // ================== GESTIÓN DE CLIENTES ==================
+        const cargarClientes = async () => {
             try {
                 const resultClientes = await fetchAPI('/clients?limit=1000');
-                const clientes = resultClientes.data || [];
-                const selectC = document.getElementById('pos-cliente');
-                selectC.innerHTML = `<option value="">Seleccione Cliente...</option>` + clientes.filter(c => c.isActive).map(c => `<option value="${c.id}">${c.documento} - ${c.firstName} ${c.lastName || ''}</option>`).join('');
-
-                const resProd = await fetchAPI('/inventory/products?limit=1000');
-                catalogo = resProd.data.filter(p => p.isActive && p.stock > 0);
-                renderCatalogo(catalogo);
-            } catch (err) { alert("Error cargando el POS"); }
+                clientesGlobales = resultClientes.data?.filter(c => c.isActive) || [];
+                renderClientesSelect(clientesGlobales);
+            } catch (err) { mostrarToast("Error cargando clientes", "error"); }
         };
 
-        const renderCatalogo = (productos) => {
-            const container = document.getElementById('pos-products');
-            container.innerHTML = productos.map(p => `
-                <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; background: var(--bg-color); display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold;">${p.codigoBarras}</span>
-                        <h4 style="color: var(--text-color); margin: 5px 0;">${p.nameProduct}</h4>
-                        <p style="color: var(--primary); font-weight: bold; margin: 0;">$${Number(p.priceVenta).toLocaleString()}</p>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Stock: ${p.stock}</span>
-                        <button class="btn-add-cart" data-id="${p.id}" style="background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">+ Añadir</button>
-                    </div>
-                </div>
-            `).join('');
+        const renderClientesSelect = (clientesList) => {
+            const selectC = document.getElementById('pos-cliente');
+            selectC.innerHTML = `<option value="">Seleccione Cliente...</option>` + 
+                clientesList.map(c => `<option value="${c.id}">${c.documento} - ${c.firstName} ${c.lastName || ''}</option>`).join('');
 
-            document.querySelectorAll('.btn-add-cart').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const prod = catalogo.find(p => p.id === Number(e.target.dataset.id));
-                    agregarAlCarrito(prod);
-                });
-            });
+            const consumidorFinal = clientesList.find(c => c.documento === '222222222' || c.firstName.toLowerCase().includes('consumidor'));
+            
+            if (consumidorFinal) {
+                selectC.value = consumidorFinal.id;
+            }
+            
+            // Revalidar las reglas siempre que se renderice la lista
+            validarReglasFacturacion();
         };
 
-        document.getElementById('pos-search').addEventListener('input', (e) => {
-            const q = e.target.value.toLowerCase();
-            const filtrados = catalogo.filter(p => p.nameProduct.toLowerCase().includes(q) || p.codigoBarras.includes(q));
-            renderCatalogo(filtrados);
+        document.getElementById('buscador-cliente').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const clientesFiltrados = clientesGlobales.filter(c => 
+                c.documento.includes(term) || 
+                c.firstName.toLowerCase().includes(term) || 
+                (c.lastName && c.lastName.toLowerCase().includes(term))
+            );
+            renderClientesSelect(clientesFiltrados);
         });
 
+        // ================== GESTIÓN DE PRODUCTOS ==================
+        const cargarCatalogoPaginado = async () => {
+            try {
+                const params = new URLSearchParams({ page: currentPage, limit: 12, inStock: 'true' });
+                if (querySearch) params.append('search', querySearch);
+
+                const resProd = await fetchAPI(`/inventory/products?${params.toString()}`);
+                const catalogoPaginado = resProd.data || [];
+                const pagination = resProd.pagination || { page: 1, totalPages: 1, hasMore: false };
+
+                const container = document.getElementById('pos-products');
+                
+                if (catalogoPaginado.length === 0) {
+                    container.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); margin-top: 20px;">No se encontraron productos en stock.</p>`;
+                } else {
+                    container.innerHTML = catalogoPaginado.map(p => `
+                        <div style="border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; background: var(--bg-color); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold;">${p.codigoBarras}</span>
+                                <h4 style="color: var(--text-color); margin: 5px 0;">${p.nameProduct}</h4>
+                                <p style="color: var(--primary); font-weight: bold; margin: 0;">$${Number(p.priceVenta).toLocaleString()}</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Stock: ${p.stock}</span>
+                                <button class="btn-add-cart" data-prod='${JSON.stringify(p)}' style="background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s;">+ Añadir</button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    document.querySelectorAll('.btn-add-cart').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const prod = JSON.parse(e.target.dataset.prod);
+                            agregarAlCarrito(prod);
+                        });
+                    });
+                }
+
+                document.getElementById('page-info-pos').textContent = `Página ${pagination.page} de ${pagination.totalPages}`;
+                document.getElementById('btn-prev-pos').disabled = pagination.page <= 1;
+                document.getElementById('btn-next-pos').disabled = !pagination.hasMore;
+
+            } catch (err) { mostrarToast("Error cargando el catálogo", "error"); }
+        };
+
+        let searchTimeout;
+        document.getElementById('pos-search').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                querySearch = e.target.value.trim();
+                currentPage = 1; 
+                cargarCatalogoPaginado(); 
+            }, 300);
+        });
+
+        document.getElementById('btn-prev-pos').addEventListener('click', () => { currentPage--; cargarCatalogoPaginado(); });
+        document.getElementById('btn-next-pos').addEventListener('click', () => { currentPage++; cargarCatalogoPaginado(); });
+
+        // ================== GESTIÓN DEL CARRITO ==================
         const agregarAlCarrito = (prod) => {
             const existente = carrito.find(item => item.productoId === prod.id);
             if (existente) {
                 if (existente.cantidad < prod.stock) existente.cantidad++;
-                else alert("Stock máximo alcanzado");
+                else mostrarToast("Stock máximo alcanzado", "error");
             } else {
                 carrito.push({ productoId: prod.id, nameProduct: prod.nameProduct, precioUnitario: Number(prod.priceVenta), cantidad: 1, stockMax: prod.stock });
             }
@@ -199,12 +297,13 @@ export const Ventas = {
             });
         };
 
+        // ================== FACTURACIÓN ==================
         document.getElementById('btn-facturar').addEventListener('click', async () => {
             const clienteId = document.getElementById('pos-cliente').value;
             const metodoDePago = document.getElementById('pos-metodo').value;
 
-            if (!clienteId) return mostrarToast("Debe seleccionar un cliente");
-            if (carrito.length === 0) return mostrarToast("El carrito está vacío");
+            if (!clienteId) return mostrarToast("Debe seleccionar un cliente", "error");
+            if (carrito.length === 0) return mostrarToast("El carrito está vacío", "error");
 
             const payload = {
                 clienteId: Number(clienteId),
@@ -216,14 +315,23 @@ export const Ventas = {
                 await fetchAPI('/sales/invoices', { method: 'POST', body: JSON.stringify(payload) });
                 const mensajeCredito = metodoDePago === 'CREDITO' ? ' Se ha creado una cuenta por cobrar en Cartera.' : '';
                 mostrarToast(`Factura registrada con éxito.${mensajeCredito}`, 'success');
+                
                 carrito = [];
-                document.getElementById('pos-cliente').value = '';
+                document.getElementById('buscador-cliente').value = '';
+                renderClientesSelect(clientesGlobales); 
+                
                 document.getElementById('pos-search').value = '';
-                await cargarDependencias();
+                querySearch = '';
+                currentPage = 1;
                 renderCarrito();
-            } catch (err) { mostrarToast("Error al cargar datos del POS", "error"); }
+                cargarCatalogoPaginado(); 
+            } catch (err) { 
+                mostrarToast(err.message || "Error al procesar la factura", "error"); 
+            }
         });
 
-        cargarDependencias();
+        // Inicializar
+        cargarClientes();
+        cargarCatalogoPaginado();
     }
 };

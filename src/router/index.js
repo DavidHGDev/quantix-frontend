@@ -12,7 +12,6 @@ import { Ventas } from '../views/Ventas.js';
 import { Cartera } from '../views/Cartera.js';
 import { HistorialFacturas } from '../views/HistorialFacturas.js';
 
-// Diccionario de rutas disponibles
 const routes = {
     '': Login,
     '#/': Login,
@@ -31,34 +30,29 @@ const routes = {
 
 export const router = () => {
     const app = document.getElementById('app');
-    let path = window.location.hash;
+    let path = window.location.hash || '#/';
 
-    // ==========================================
-    // ROUTE GUARD (Protección de rutas)
-    // ==========================================
-    const token = localStorage.getItem('token'); // Verificamos si hay sesión activa
+    // 1. Verificamos la sesión persistente (Este no se borra al dar Ctrl + R)
+    const usuarioString = localStorage.getItem('usuario'); 
+    
+    const isPublicRoute = (path === '' || path === '#/' || path === '#/login');
 
-    // Si intenta ir al dashboard (o cualquier ruta privada) sin token...
-    if (path === '#/dashboard' && !token) {
-        console.warn('Acceso denegado: No hay token. Redirigiendo al Login.');
-        window.location.hash = '#/login'; // Redirección forzada
-        return; // Detenemos la ejecución
+    // 2. Si intenta ir a CUALQUIER ruta privada sin sesión, lo expulsamos al login
+    if (!isPublicRoute && !usuarioString) {
+        window.location.hash = '#/login';
+        return;
     }
 
-    // Si ya está logueado y trata de ir al login, lo mandamos al dashboard
-    if ((path === '#/login' || path === '' || path === '#/') && token) {
+    // 3. Si ya está logueado y trata de ver el login, lo forzamos al dashboard
+    if (isPublicRoute && usuarioString) {
         window.location.hash = '#/dashboard';
         return;
     }
-    // ==========================================
 
-    // Obtenemos el módulo correspondiente a la ruta
     const view = routes[path] || routes['#/login'];
 
-    // 1. Fase de Dibujado (Render)
     app.innerHTML = view.render();
 
-    // 2. Fase de Interactividad (Eventos)
     if (typeof view.attachEvents === 'function') {
         view.attachEvents();
     }
