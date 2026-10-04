@@ -193,20 +193,38 @@ export const Inventario = {
 
         const cargarSelects = async () => {
             try {
-                const categorias = await fetchAPI('/inventory/categories');
+                // 1. Cargar Categorías
+                const resCat = await fetchAPI('/inventory/categories');
+                // Fallback de seguridad: si es array lo usamos, sino buscamos .data, sino []
+                const categorias = Array.isArray(resCat) ? resCat : (resCat?.data || []);
                 const catSelect = document.getElementById('categoriaId');
-                catSelect.innerHTML = `<option value="">Seleccione Categoría...</option>` + 
-                    categorias.map(c => `<option value="${c.id}">${c.nameCategorie}</option>`).join('');
+                
+                if (catSelect) {
+                    catSelect.innerHTML = `<option value="">Seleccione Categoría...</option>` + 
+                        categorias.map(c => `<option value="${c.id}">${c.nameCategorie}</option>`).join('');
+                }
 
-                const proveedores = await fetchAPI('/inventory/suppliers');
+                // 2. Cargar Proveedores
+                const resProv = await fetchAPI('/inventory/suppliers');
+                const proveedores = Array.isArray(resProv) ? resProv : (resProv?.data || []);
                 const provContainer = document.getElementById('proveedores-checkboxes');
-                provContainer.innerHTML = proveedores.map(p => `
-                    <label style="display: flex; align-items: center; gap: 8px; color: var(--text-color); font-size: 0.85rem;">
-                        <input type="checkbox" name="supplierIds" value="${p.id}" class="sup-checkbox">
-                        ${p.razonSocial}
-                    </label>
-                `).join('');
-            } catch (error) { console.error("Error cargando selects", error); }
+                
+                if (provContainer) {
+                    if (proveedores.length === 0) {
+                        provContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; margin: 0; padding: 5px 0;">No hay proveedores registrados aún.</p>`;
+                    } else {
+                        provContainer.innerHTML = proveedores.map(p => `
+                            <label style="display: flex; align-items: center; gap: 8px; color: var(--text-color); font-size: 0.85rem;">
+                                <input type="checkbox" name="supplierIds" value="${p.id}" class="sup-checkbox">
+                                ${p.razonSocial}
+                            </label>
+                        `).join('');
+                    }
+                }
+            } catch (error) { 
+                console.error(error);
+                mostrarToast("Error al cargar categorías o proveedores", "error"); 
+            }
         };
 
         const cargarProductos = async () => {
