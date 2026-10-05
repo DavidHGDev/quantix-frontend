@@ -162,7 +162,7 @@ export const Proveedores = {
 
         const cargarProveedores = async () => {
             try {
-                const params = new URLSearchParams({ page: currentPage, limit: 10 });
+                const params = new URLSearchParams({ page: currentPage, limit: 6 });
                 if (querySearch) params.append('search', querySearch);
 
                 const result = await fetchAPI(`/inventory/suppliers?${params.toString()}`);
