@@ -319,6 +319,9 @@ export const Ventas = {
                 carrito = [];
                 document.getElementById('buscador-cliente').value = '';
                 renderClientesSelect(clientesGlobales); 
+
+                document.getElementById('pos-metodo').value = 'EFECTIVO';
+                validarReglasFacturacion(); //Válida de nuevo la regla de facturación para el método.
                 
                 document.getElementById('pos-search').value = '';
                 querySearch = '';
